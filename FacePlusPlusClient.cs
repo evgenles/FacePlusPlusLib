@@ -61,6 +61,17 @@ namespace FacePlusPlusLib
         }
 
         /// <summary>
+        /// Find one or more most similar faces from Faceset, to a new face. You can upload image file or use face_token for face searching. For image upload, the biggest face by the size of bounding box within the image will be used. For face_token, you shall get it by using Detect API.
+        /// </summary>
+        /// <param name="request">Request for search</param>
+        /// <returns>Response of searching</returns>
+        public async Task<FaceSearchResponse> FaceSearchAsync(FaceSearchRequest request)
+        {
+            var searchUrl =  $"{_baseUrl}/facepp/{Version}/compare";
+            return await FaceApiRequest<FaceSearchRequest, FaceSearchResponse>(request, searchUrl);
+        }
+        #region FaceSet
+        /// <summary>
         /// Create a face collection called FaceSet to store face_token. One FaceSet can hold up to 10,000 face_token.
         /// </summary>
         /// <param name="request">Request for create faceSet</param>
@@ -137,7 +148,9 @@ namespace FacePlusPlusLib
             var faceSetUpdateUrl = $"{_baseUrl}/facepp/{Version}/faceset/getdetail";
             return await FaceApiRequest<FaceSetUpdateRequest, FaceSetUpdateResponse>(request, faceSetUpdateUrl);
         }
-        
+        #endregion
+
+        #region PrivateFunc
         private async Task<TResponse> FaceApiRequest<TRequest, TResponse>(TRequest request, string url)
             where TRequest : IRequest
             where TResponse : IResponse
@@ -170,5 +183,7 @@ namespace FacePlusPlusLib
             paramDir.Add("api_secret", _apiSecret);
             return paramDir;
         }
+        #endregion
+
     }
 }
