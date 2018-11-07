@@ -72,17 +72,35 @@ namespace FacePlusPlusLib
             return await FaceApiRequest<FaceSearchRequest, FaceSearchResponse>(request, searchUrl);
         }
 
+        #region face
         /// <summary>
         /// Get face landmarks and attributes by passing its face_token which you can get from Detect API. Face Analyze API allows you to process  up to 5 face_token at a time.
         /// </summary>
         /// <param name="request">Request for analyze</param>
         /// <returns>Response from face analyze</returns>
-        public async Task<FaceAnalyzeResponse> FaceAnalyze(FaceAnalyzeRequest request)
+        public async Task<FaceAnalyzeResponse> FaceAnalyzeAsync(FaceAnalyzeRequest request)
         {
             var faceAnalyzeUrl = $"{_baseUrl}/facepp/{Version}/face/analyze";
             return await FaceApiRequest<FaceAnalyzeRequest, FaceAnalyzeResponse>(request, faceAnalyzeUrl);
         }
 
+        /// <summary>
+        /// Get information related to a face by passing its face_token which you can get from Detect API. Face related information includes image_id and FaceSet which it belongs to.
+        /// </summary>
+        /// <param name="request">Request for face get detail</param>
+        /// <returns>Response from face get detail</returns>
+        public async Task<FaceGetDetailResponse> FaceGetDetailAsync(FaceGetDetailRequest request)
+        {
+            var faceGetDetailUrl = $"{_baseUrl}/facepp/{Version}/face/getdetail";
+            return await FaceApiRequest<FaceGetDetailRequest, FaceGetDetailResponse>(request, faceGetDetailUrl);
+        }
+
+        public async Task<FaceSetUserIdResponse> FaceSetUserIdAsync(FaceSetUserIdRequest request)
+        {
+            var faceSetUserIdUrl = $"{_baseUrl}/facepp/{Version}/face/setuserid";
+            return await FaceApiRequest<FaceSetUserIdRequest, FaceSetUserIdResponse>(request, faceSetUserIdUrl);
+        }
+        #endregion
 
         #region FaceSet
         /// <summary>
