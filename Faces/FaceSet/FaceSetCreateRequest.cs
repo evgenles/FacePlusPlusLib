@@ -42,14 +42,14 @@ namespace FacePlusPlusLib.Faces.FaceSet
 
         public (Dictionary<string, string>, Dictionary<string, Stream>) ConvertToDictionaries()
         {
-            var tagStr = string.Join(",", Tags).ToLower();
+            var tagStr = Tags != null ? string.Join(",", Tags).ToLower() : null;
             Validate(tagStr);
             return (new Dictionary<string, string>
             {
                 ["display_name"] = DisplayName,
                 ["outer_id"] = OuterId,
                 ["tags"] = tagStr,
-                ["face_tokens"] = string.Join(",", FaceTokens).ToLower(),
+                ["face_tokens"] = FaceTokens != null ? string.Join(",", FaceTokens)?.ToLower() : null,
                 ["user_data"] = UserData,
                 ["force_merge"] = (ForceMerge.HasValue ? (ForceMerge.Value ? "1" : "0") : null)
             }, new Dictionary<string, Stream>());
@@ -74,7 +74,7 @@ namespace FacePlusPlusLib.Faces.FaceSet
             if (FaceTokens?.Count > 5)
                 throw new ArgumentException($"Property {nameof(FaceTokens)} must contain less then 5 string");
 
-            if (UserData.Length * sizeof(char) > 16 * 1024 || UserData.IndexOfAny("^@,&=*'\"".ToCharArray()) > -1)
+            if (UserData?.Length * sizeof(char) > 16 * 1024 || UserData?.IndexOfAny("^@,&=*'\"".ToCharArray()) > -1)
                 throw new ArgumentException(
                     $"Property {nameof(DisplayName)} must be less than 16KB, and must not contain characters ^@,&=*'\"");
         }

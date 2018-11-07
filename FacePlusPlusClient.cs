@@ -10,14 +10,15 @@ using Newtonsoft.Json;
 
 namespace FacePlusPlusLib
 {
-    public class FacePlusPlusClient
+    public class FacePlusPlusClient : IFacePlusPlusClient
     {
-        private readonly string _apiKey;
         private readonly string _apiSecret;
         private readonly HttpClient _httpClient;
         private readonly string _baseUrl = "https://api-us.faceplusplus.com";
         
         private const string Version = "v3";
+
+        public string ApiKey { get; }
 
         /// <summary>
         /// Initialize the face++ client
@@ -29,12 +30,15 @@ namespace FacePlusPlusLib
         public FacePlusPlusClient(string apiKey, string apiSecret, HttpClientHandler httpHandler = null,
             string customBaseUrl = null)
         {
-            _apiKey = apiKey;
+            ApiKey = apiKey;
             _apiSecret = apiSecret;
             _httpClient = new HttpClient(httpHandler);
             if (customBaseUrl != null) _baseUrl = customBaseUrl;
         }
 
+        #region Face Recognition
+
+        #region base
         /// <summary>
         /// Detect and analyze human faces within the image that you provided.
         /// Detect API can detect all the faces within the image. Each detected face gets its face_token, which can be used in follow-up analysis and operations. With a Standard API Key, you can specify a rectangle area within the image to perform face detection.
@@ -71,6 +75,7 @@ namespace FacePlusPlusLib
             var searchUrl =  $"{_baseUrl}/facepp/{Version}/compare";
             return await FaceApiRequest<FaceSearchRequest, FaceSearchResponse>(request, searchUrl);
         }
+        #endregion
 
         #region face
         /// <summary>
@@ -182,7 +187,10 @@ namespace FacePlusPlusLib
         }
         #endregion
 
-        #region PrivateFunc
+       
+        #endregion
+
+        #region Base functions
         private async Task<TResponse> FaceApiRequest<TRequest, TResponse>(TRequest request, string url)
             where TRequest : IRequest
             where TResponse : IResponse
@@ -211,11 +219,11 @@ namespace FacePlusPlusLib
 
         private Dictionary<string, string> AddBaseConfiguration(Dictionary<string, string> paramDir)
         {
-            paramDir.Add("api_key", _apiKey);
+            paramDir.Add("api_key", ApiKey);
             paramDir.Add("api_secret", _apiSecret);
             return paramDir;
         }
-        #endregion
-
+        #endregion  
+        
     }
 }

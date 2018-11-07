@@ -13,15 +13,14 @@ namespace FacePlusPlusLib.Faces.FaceSet
         public string UserData { get; set; } = null;
 
         public List<string> Tags { get; set; } = null;
-        
+
         public override (Dictionary<string, string>, Dictionary<string, Stream>) ConvertToDictionaries()
         {
-
             var dictionaries = base.ConvertToDictionaries();
-            
-            var tagStr = string.Join(",", Tags).ToLower();
+
+            var tagStr = Tags != null ? string.Join(",", Tags).ToLower() : null;
             Validate(tagStr);
-            return (new Dictionary<string, string> (dictionaries.Item1)
+            return (new Dictionary<string, string>(dictionaries.Item1)
             {
                 ["new_outer_id"] = NewOuterId,
                 ["display_name"] = DisplayName,
@@ -46,7 +45,7 @@ namespace FacePlusPlusLib.Faces.FaceSet
                 throw new ArgumentException(
                     $"Property {nameof(Tags)} must be less than 255 characters, and must not contain characters ^@,&=*'\"");
 
-            if (UserData.Length * sizeof(char) > 16 * 1024 || UserData.IndexOfAny("^@,&=*'\"".ToCharArray()) > -1)
+            if (UserData?.Length * sizeof(char) > 16 * 1024 || UserData?.IndexOfAny("^@,&=*'\"".ToCharArray()) > -1)
                 throw new ArgumentException(
                     $"Property {nameof(DisplayName)} must be less than 16KB, and must not contain characters ^@,&=*'\"");
         }

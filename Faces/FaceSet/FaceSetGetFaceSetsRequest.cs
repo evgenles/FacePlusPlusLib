@@ -15,12 +15,12 @@ namespace FacePlusPlusLib.Faces.FaceSet
         /// Default value: 1.
         /// </summary>
         public int? Start { get; set; } = null;
-        
+
         public (Dictionary<string, string>, Dictionary<string, Stream>) ConvertToDictionaries()
         {
             return (new Dictionary<string, string>
             {
-                ["tags"] = string.Join(",", Tags).ToLower(),
+                ["tags"] = Tags != null ? string.Join(",", Tags)?.ToLower() : null,
                 ["start"] = Start?.ToString()
             }, new Dictionary<string, Stream>());
         }

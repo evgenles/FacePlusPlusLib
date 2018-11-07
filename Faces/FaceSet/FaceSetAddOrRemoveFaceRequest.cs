@@ -21,13 +21,13 @@ namespace FacePlusPlusLib.Faces.FaceSet
             Validate();
             return (new Dictionary<string, string>(dictionaries.Item1)
             {
-                ["face_tokens"] = string.Join(",", FaceTokens).ToLower()
+                ["face_tokens"] = FaceTokens != null ? string.Join(",", FaceTokens)?.ToLower() : null
             }, dictionaries.Item2);
         }
 
         private void Validate()
         {
-           if (FaceTokens.Count < 1 || FaceTokens.Count > 5)
+            if (FaceTokens.Count < 1 || FaceTokens.Count > 5)
                 throw new ArgumentException("Required from one to five face tokens");
         }
     }

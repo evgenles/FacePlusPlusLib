@@ -28,7 +28,7 @@ namespace FacePlusPlusLib.Faces.Face
             Validate();
             return (new Dictionary<string, string>
             {
-                ["face_tokens"] = string.Join(",", FaceTokens),
+                ["face_tokens"] = FaceTokens != null ? string.Join(",", FaceTokens) : null,
                 ["return_landmark"] = ((int) ReturnLandmark).ToString(),
                 ["return_attributes"] = ReturnAttributes.ToString().ToLower().Replace(" ", "")
             }, new Dictionary<string, Stream>());
