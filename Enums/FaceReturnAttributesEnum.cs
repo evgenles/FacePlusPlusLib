@@ -18,6 +18,6 @@ namespace FacePlusPlusLib.Enums
         Beauty = 512,
         MouthStatus = 1024,
         EyeGaze = 2048,
-        SkinStatus = 5096
+        SkinStatus = 4096
     }
 }
