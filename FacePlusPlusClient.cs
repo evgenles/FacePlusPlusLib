@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using FacePlusPlusLib.Faces;
+using FacePlusPlusLib.Faces.Face;
 using FacePlusPlusLib.Faces.FaceSet;
 using FacePlusPlusLib.Helpers;
 using Newtonsoft.Json;
@@ -70,6 +71,19 @@ namespace FacePlusPlusLib
             var searchUrl =  $"{_baseUrl}/facepp/{Version}/compare";
             return await FaceApiRequest<FaceSearchRequest, FaceSearchResponse>(request, searchUrl);
         }
+
+        /// <summary>
+        /// Get face landmarks and attributes by passing its face_token which you can get from Detect API. Face Analyze API allows you to process  up to 5 face_token at a time.
+        /// </summary>
+        /// <param name="request">Request for analyze</param>
+        /// <returns>Response from face analyze</returns>
+        public async Task<FaceAnalyzeResponse> FaceAnalyze(FaceAnalyzeRequest request)
+        {
+            var faceAnalyzeUrl = $"{_baseUrl}/facepp/{Version}/face/analyze";
+            return await FaceApiRequest<FaceAnalyzeRequest, FaceAnalyzeResponse>(request, faceAnalyzeUrl);
+        }
+
+
         #region FaceSet
         /// <summary>
         /// Create a face collection called FaceSet to store face_token. One FaceSet can hold up to 10,000 face_token.
