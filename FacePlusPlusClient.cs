@@ -103,8 +103,41 @@ namespace FacePlusPlusLib
             var faceSetDeleteUrl = $"{_baseUrl}/facepp/{Version}/faceset/delete";
             return await FaceApiRequest<FaceSetDeleteRequest, FaceSetDeleteResponse>(request, faceSetDeleteUrl);
         }
-        
 
+        /// <summary>
+        /// Get all the FaceSet.
+        /// Get the list of FaceSet under an API Key, as well as information such as faceset_token, outer_id, display_name, and tags.
+        /// </summary>
+        /// <param name="request">Request for get faceSets</param>
+        /// <returns>Response of getting all face sets</returns>
+        public async Task<FaceSetGetFaceSetsResponse> FaceSetGetFaceSetAsync(FaceSetGetFaceSetsRequest request)
+        {
+            var faceSetGetFaceSetsUrl = $"{_baseUrl}/facepp/{Version}/faceset/getfacesets";
+            return await FaceApiRequest<FaceSetGetFaceSetsRequest, FaceSetGetFaceSetsResponse>(request, faceSetGetFaceSetsUrl);
+        }
+
+        /// <summary>
+        /// Get details about a FaceSet, including information such as faceset_token, outer_id, display_name, as well as the number and list of face_token within this FaceSet.
+        /// </summary>
+        /// <param name="request">Request for get detail of face set</param>
+        /// <returns>Response of getting all face set</returns>
+        public async Task<FaceSetGetDetailResponse> FaceSetGetDetailAsync(FaceSetGetDetailRequest request)
+        {
+            var faceSetGetDetailUrl = $"{_baseUrl}/facepp/{Version}/faceset/getdetail";
+            return await FaceApiRequest<FaceSetGetDetailRequest, FaceSetGetDetailResponse>(request, faceSetGetDetailUrl);
+        }
+
+        /// <summary>
+        /// Update the attributes of a FaceSet.
+        /// </summary>
+        /// <param name="request">Request for update face set</param>
+        /// <returns>Response of updating face set</returns>
+        public async Task<FaceSetUpdateResponse> FaceSetUpdateAsync(FaceSetUpdateRequest request)
+        {
+            var faceSetUpdateUrl = $"{_baseUrl}/facepp/{Version}/faceset/getdetail";
+            return await FaceApiRequest<FaceSetUpdateRequest, FaceSetUpdateResponse>(request, faceSetUpdateUrl);
+        }
+        
         private async Task<TResponse> FaceApiRequest<TRequest, TResponse>(TRequest request, string url)
             where TRequest : IRequest
             where TResponse : IResponse
