@@ -2,7 +2,9 @@ using System.Runtime.CompilerServices;
 
 namespace FacePlusPlusLib.Logging
 {
-    public class LogResponse<TRequest, TResponse> : BaseLog where T : IResponse
+    public class LogResponse<TRequest, TResponse> : BaseLog 
+        where TRequest : IRequest
+        where TResponse: IResponse
     {
         public LogResponse([CallerMemberName] string methodName = "", [CallerFilePath] string sourceFilePath = "",
             [CallerLineNumber] int lineNumber = 0) : base(methodName, sourceFilePath, lineNumber)
