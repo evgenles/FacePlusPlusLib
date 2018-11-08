@@ -1,4 +1,4 @@
-namespace FacePlusPlusLib.Faces
+namespace FacePlusPlusLib
 {
     public interface IResponse
     {

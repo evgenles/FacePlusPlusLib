@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace FacePlusPlusLib.Faces
+namespace FacePlusPlusLib
 {
     public abstract class BaseResponse : IResponse
     {

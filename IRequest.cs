@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace FacePlusPlusLib.Faces
+namespace FacePlusPlusLib
 {
     public interface IRequest
     {

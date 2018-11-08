@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
 using FacePlusPlusLib.Faces;
 using FacePlusPlusLib.Faces.Face;
 using FacePlusPlusLib.Faces.FaceSet;
 using FacePlusPlusLib.Helpers;
+using FacePlusPlusLib.Logging;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Newtonsoft.Json;
 
 namespace FacePlusPlusLib
@@ -15,21 +19,24 @@ namespace FacePlusPlusLib
         private readonly string _apiSecret;
         private readonly HttpClient _httpClient;
         private readonly string _baseUrl = "https://api-us.faceplusplus.com";
-        
+        private readonly ILogger _logger;
         private const string Version = "v3";
+
 
         public string ApiKey { get; }
 
         /// <summary>
         /// Initialize the face++ client
         /// </summary>
+        /// <param name="logger">Logger</param>
         /// <param name="apiKey">Api key received on faceplusplus.com</param>
         /// <param name="apiSecret">Api secret received on faceplusplus.com<</param>
         /// <param name="httpHandler">Custom http handler</param>
         /// <param name="customBaseUrl">Custom base url (default: https://api-us.faceplusplus.com)</param>
-        public FacePlusPlusClient(string apiKey, string apiSecret, HttpClientHandler httpHandler = null,
+        public FacePlusPlusClient(ILogger logger, string apiKey, string apiSecret, HttpClientHandler httpHandler = null,
             string customBaseUrl = null)
         {
+            _logger = logger ?? new NullLogger<FacePlusPlusClient>();
             ApiKey = apiKey;
             _apiSecret = apiSecret;
             _httpClient = new HttpClient(httpHandler);
@@ -39,6 +46,7 @@ namespace FacePlusPlusLib
         #region Face Recognition
 
         #region base
+
         /// <summary>
         /// Detect and analyze human faces within the image that you provided.
         /// Detect API can detect all the faces within the image. Each detected face gets its face_token, which can be used in follow-up analysis and operations. With a Standard API Key, you can specify a rectangle area within the image to perform face detection.
@@ -50,6 +58,7 @@ namespace FacePlusPlusLib
         public async Task<FaceDetectResponse> FaceDetectAsync(FaceDetectRequest request)
         {
             var detectUrl = $"{_baseUrl}/facepp/{Version}/detect";
+
             return await FaceApiRequest<FaceDetectRequest, FaceDetectResponse>(request, detectUrl);
         }
 
@@ -72,12 +81,14 @@ namespace FacePlusPlusLib
         /// <returns>Response of searching</returns>
         public async Task<FaceSearchResponse> FaceSearchAsync(FaceSearchRequest request)
         {
-            var searchUrl =  $"{_baseUrl}/facepp/{Version}/compare";
+            var searchUrl = $"{_baseUrl}/facepp/{Version}/search";
             return await FaceApiRequest<FaceSearchRequest, FaceSearchResponse>(request, searchUrl);
         }
+
         #endregion
 
         #region face
+
         /// <summary>
         /// Get face landmarks and attributes by passing its face_token which you can get from Detect API. Face Analyze API allows you to process  up to 5 face_token at a time.
         /// </summary>
@@ -105,9 +116,11 @@ namespace FacePlusPlusLib
             var faceSetUserIdUrl = $"{_baseUrl}/facepp/{Version}/face/setuserid";
             return await FaceApiRequest<FaceSetUserIdRequest, FaceSetUserIdResponse>(request, faceSetUserIdUrl);
         }
+
         #endregion
 
         #region FaceSet
+
         /// <summary>
         /// Create a face collection called FaceSet to store face_token. One FaceSet can hold up to 10,000 face_token.
         /// </summary>
@@ -116,7 +129,8 @@ namespace FacePlusPlusLib
         public async Task<FaceSetAddOrCreateFaceResponse> FaceSetCreateAsync(FaceSetCreateRequest request)
         {
             var faceSetCreateUrl = $"{_baseUrl}/facepp/{Version}/faceset/create";
-            return await FaceApiRequest<FaceSetCreateRequest, FaceSetAddOrCreateFaceResponse>(request, faceSetCreateUrl);
+            return await FaceApiRequest<FaceSetCreateRequest, FaceSetAddOrCreateFaceResponse>(request,
+                faceSetCreateUrl);
         }
 
         /// <summary>
@@ -127,7 +141,8 @@ namespace FacePlusPlusLib
         public async Task<FaceSetAddOrCreateFaceResponse> FaceSetAddFaceAsync(FaceSetAddOrRemoveFaceRequest request)
         {
             var faceSetAddFaceUrl = $"{_baseUrl}/facepp/{Version}/faceset/addface";
-            return await FaceApiRequest<FaceSetAddOrRemoveFaceRequest, FaceSetAddOrCreateFaceResponse>(request, faceSetAddFaceUrl);
+            return await FaceApiRequest<FaceSetAddOrRemoveFaceRequest, FaceSetAddOrCreateFaceResponse>(request,
+                faceSetAddFaceUrl);
         }
 
         /// <summary>
@@ -138,7 +153,8 @@ namespace FacePlusPlusLib
         public async Task<FaceSetRemoveFaceResponse> FaceSetRemoveFaceAsync(FaceSetAddOrRemoveFaceRequest request)
         {
             var faceSetRemoveFaceUrl = $"{_baseUrl}/facepp/{Version}/faceset/removeface";
-            return await FaceApiRequest<FaceSetAddOrRemoveFaceRequest, FaceSetRemoveFaceResponse>(request, faceSetRemoveFaceUrl);
+            return await FaceApiRequest<FaceSetAddOrRemoveFaceRequest, FaceSetRemoveFaceResponse>(request,
+                faceSetRemoveFaceUrl);
         }
 
         /// <summary>
@@ -161,7 +177,8 @@ namespace FacePlusPlusLib
         public async Task<FaceSetGetFaceSetsResponse> FaceSetGetFaceSetAsync(FaceSetGetFaceSetsRequest request)
         {
             var faceSetGetFaceSetsUrl = $"{_baseUrl}/facepp/{Version}/faceset/getfacesets";
-            return await FaceApiRequest<FaceSetGetFaceSetsRequest, FaceSetGetFaceSetsResponse>(request, faceSetGetFaceSetsUrl);
+            return await FaceApiRequest<FaceSetGetFaceSetsRequest, FaceSetGetFaceSetsResponse>(request,
+                faceSetGetFaceSetsUrl);
         }
 
         /// <summary>
@@ -172,7 +189,8 @@ namespace FacePlusPlusLib
         public async Task<FaceSetGetDetailResponse> FaceSetGetDetailAsync(FaceSetGetDetailRequest request)
         {
             var faceSetGetDetailUrl = $"{_baseUrl}/facepp/{Version}/faceset/getdetail";
-            return await FaceApiRequest<FaceSetGetDetailRequest, FaceSetGetDetailResponse>(request, faceSetGetDetailUrl);
+            return await FaceApiRequest<FaceSetGetDetailRequest, FaceSetGetDetailResponse>(request,
+                faceSetGetDetailUrl);
         }
 
         /// <summary>
@@ -185,33 +203,89 @@ namespace FacePlusPlusLib
             var faceSetUpdateUrl = $"{_baseUrl}/facepp/{Version}/faceset/getdetail";
             return await FaceApiRequest<FaceSetUpdateRequest, FaceSetUpdateResponse>(request, faceSetUpdateUrl);
         }
+
         #endregion
 
-       
         #endregion
 
         #region Base functions
+
         private async Task<TResponse> FaceApiRequest<TRequest, TResponse>(TRequest request, string url)
             where TRequest : IRequest
             where TResponse : IResponse
         {
+            var watch = new Stopwatch();
+            watch.Start();
             var dictionaries = request.ConvertToDictionaries();
             var content =
                 MultipartContentHelper.CreateMultipart(AddBaseConfiguration(dictionaries.Item1), dictionaries.Item2);
-
+            _logger.LogTrace("{@FaceApiRequest}", new LogRequest<TRequest>
+            {
+                Request = request,
+                RequestUrl = url,
+                StringsInRequest = dictionaries.Item1,
+                StreamsInRequest = dictionaries.Item2,
+                ContentForRequest = content
+            });
             var response = await _httpClient.PostAsync(url, content);
+
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<TResponse>(json);
+                try
+                {
+                    var tResponse = JsonConvert.DeserializeObject<TResponse>(json);
+                    watch.Stop();
+                    _logger.LogInformation("{@FaceApiResponse}", new LogResponse<TRequest, TResponse>
+                    {
+                        Request = request,
+                        StatusCode = (int) response.StatusCode,
+                        Response = tResponse,
+                        Duration = watch.ElapsedMilliseconds,
+                        ResponseContent = json
+                    });
+                    return tResponse;
+                }
+                catch (Exception ex)
+                {
+                    watch.Stop();
+                    _logger.LogError("{@FaceApiResponse}", new LogResponse<TRequest, TResponse>
+                    {
+                        Request = request,
+                        StatusCode = (int) response.StatusCode,
+                        Exception = ex.ToString(),
+                        Duration = watch.ElapsedMilliseconds,
+                        ResponseContent = json
+                    });
+                    throw;
+                }
             }
             else
             {
                 if (response.Content == null)
+                {
+                    watch.Stop();
+                    _logger.LogError("{@FaceApiResponse", new LogResponse<TRequest, TResponse>
+                    {
+                        Request = request,
+                        StatusCode = (int) response.StatusCode,
+                        Duration = watch.ElapsedMilliseconds,
+                        Exception = "Request not successful completed, message unavailable"
+                    });
                     throw new HttpRequestException(
                         $"Request not successful completed. Response code: {response.StatusCode}");
+                }
 
                 var json = await response.Content.ReadAsStringAsync();
+                watch.Stop();
+                _logger.LogError("{@FaceApiResponse", new LogResponse<TRequest, TResponse>
+                {
+                    Request = request,
+                    StatusCode = (int) response.StatusCode,
+                    Duration = watch.ElapsedMilliseconds,
+                    Exception = "Request not successful completed, see additional info",
+                    AdditionalInfo = json
+                });
                 throw new HttpRequestException(
                     $"Request not successful completed. Error: {JsonConvert.DeserializeObject<ErrorMessage>(json).Message}");
             }
@@ -223,7 +297,7 @@ namespace FacePlusPlusLib
             paramDir.Add("api_secret", _apiSecret);
             return paramDir;
         }
-        #endregion  
-        
+
+        #endregion
     }
 }
